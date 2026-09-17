@@ -1,59 +1,120 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ChatLaravelPusher
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicação de chat em tempo real construída com **Laravel 12**, usando o pacote **[Chatify](https://github.com/munafio/chatify)** para a interface e a lógica de mensagens, e o **Pusher** como serviço de broadcasting para entregar as mensagens em tempo real. Autenticação de usuários feita com **Laravel Breeze**.
 
-## About Laravel
+## Funcionalidades
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Autenticação de usuários (registro, login, verificação de e-mail, recuperação de senha) via Laravel Breeze
+- Chat privado entre usuários em tempo real (Pusher)
+- Envio de mensagens com anexos/arquivos
+- Marcar conversas como favoritas
+- Busca de contatos e conversas
+- Compartilhamento de fotos na conversa
+- Status de "ativo" do usuário (online/offline)
+- Modo escuro e cor do "messenger" configuráveis por usuário
+- Apagar mensagens e conversas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend:** PHP 8.2+, Laravel 12
+- **Chat:** [munafio/chatify](https://github.com/munafio/chatify) ^1.6
+- **Broadcasting em tempo real:** Pusher
+- **Autenticação:** Laravel Breeze
+- **Frontend:** Blade, Tailwind CSS, Alpine.js, Vite
+- **Banco de dados:** SQLite por padrão (pode ser trocado por MySQL/PostgreSQL)
+- **Testes:** Pest
 
-## Learning Laravel
+## Requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP >= 8.2
+- Composer
+- Node.js e NPM
+- Uma conta no [Pusher](https://pusher.com) (App ID, Key, Secret e Cluster)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalação
 
-## Laravel Sponsors
+1. Clone o repositório e instale as dependências PHP:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   composer install
+   ```
 
-### Premium Partners
+2. Instale as dependências JavaScript:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+   ```bash
+   npm install
+   ```
 
-## Contributing
+3. Copie o arquivo de ambiente e gere a chave da aplicação:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Code of Conduct
+4. Configure o banco de dados no `.env` (por padrão usa SQLite — crie o arquivo se necessário):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   ```bash
+   touch database/database.sqlite
+   ```
 
-## Security Vulnerabilities
+5. Configure as credenciais do **Pusher** no `.env`:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```env
+   BROADCAST_CONNECTION=pusher
 
-## License
+   PUSHER_APP_ID=seu_app_id
+   PUSHER_APP_KEY=sua_app_key
+   PUSHER_APP_SECRET=seu_app_secret
+   PUSHER_APP_CLUSTER=mt1
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6. Rode as migrations (criam as tabelas de usuários, mensagens e favoritos do Chatify):
+
+   ```bash
+   php artisan migrate
+   ```
+
+7. Publique os assets do Chatify (se ainda não estiverem em `public/`):
+
+   ```bash
+   php artisan chatify:publish
+   ```
+
+8. Compile os assets do frontend:
+
+   ```bash
+   npm run build
+   ```
+
+## Executando o projeto
+
+Em desenvolvimento, é possível subir o servidor, a fila, os logs e o Vite juntos com um único comando (definido no `composer.json`):
+
+```bash
+composer run dev
+```
+
+Ou manualmente:
+
+```bash
+php artisan serve
+npm run dev
+```
+
+A aplicação estará disponível em `http://localhost:8000`. O chat do Chatify fica acessível na rota configurada em `CHATIFY_ROUTES_PREFIX` (padrão: `/chatify`).
+
+## Estrutura relevante
+
+- `app/Models/ChMessage.php`, `app/Models/ChFavorite.php` — modelos das mensagens e favoritos do chat
+- `config/chatify.php` — configurações do Chatify (rotas, Pusher, upload de arquivos etc.)
+- `routes/chatify/` — rotas web e API do módulo de chat
+- `database/migrations/` — migrations de usuários e das tabelas do Chatify (mensagens, favoritos, avatar, status ativo, modo escuro, cor do messenger)
+
+## Testes
+
+O projeto usa Pest para testes:
+
+```bash
+composer test
+```
